@@ -6,10 +6,7 @@ package com.abn.selcucumber.pages;
 
 import com.abn.selcucumber.exception.*;
 import com.google.common.base.Function;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +14,11 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The type Base page.
+ *
+ * @param <P    > the type parameter
+ */
 public abstract class BasePage <P extends BasePage> {
 
     protected WebDriver driver;
@@ -175,6 +177,12 @@ public abstract class BasePage <P extends BasePage> {
         }
     }
 
+    /**
+     * Is element present boolean.
+     *
+     * @param webElement the web element
+     * @return the boolean
+     */
     public boolean isElementPresent(WebElement webElement) {
         try {
             webElement.isDisplayed();
@@ -185,6 +193,12 @@ public abstract class BasePage <P extends BasePage> {
         }
     }
 
+    /**
+     * Switch to iframe.
+     *
+     * @param element the element
+     * @throws IFrameNotFoundException the frame not found exception
+     */
     public void switchToiFrame(WebElement element) throws IFrameNotFoundException{
         if(isElementPresent(element)){
             driver.switchTo().frame(element);
@@ -194,6 +208,11 @@ public abstract class BasePage <P extends BasePage> {
         }
     }
 
+    /**
+     * Switch back from Iframe.
+     *
+     * @throws IFrameNotFoundException the frame not found exception
+     */
     public void switchBackFromiFrame() throws IFrameNotFoundException {
         driver.switchTo().defaultContent();
     }
@@ -202,6 +221,36 @@ public abstract class BasePage <P extends BasePage> {
         driver.navigate().refresh();
     }
 
+    /**
+     * Scroll to page bottom.
+     *
+     * @throws Exception the exception
+     */
+    public void scrollToPageBottom() throws Exception {
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0,document.body.scrollHeight);");
+    }
+
+    /**
+     * Scroll to element.
+     *
+     * @param element the element
+     * @throws Exception the exception
+     */
+    public void scrollToElement(WebElement element) throws Exception {
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);
+    }
+
+    /**
+     * Wait for jQuery.
+     */
+    public void waitForJQuery() {
+        (new WebDriverWait(driver, 30)).until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver d) {
+                JavascriptExecutor js = (JavascriptExecutor) d;
+                return (Boolean) js.executeScript("return !!window.jQuery && window.jQuery.active == 0");
+            }
+        });
+    }
 
 
 }
